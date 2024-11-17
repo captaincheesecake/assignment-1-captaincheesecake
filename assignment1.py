@@ -139,16 +139,49 @@ def usage():
 
 def valid_date(date: str) -> bool:
     "check validity of date"
-    ...
+    day, mon, year = (int(x) for x in date.split('/'))
+        
+    # Check if date is valid
+    if year < 1582 or mon < 1 or mon > 12 or day < 1:
+        return False
+        
+    # Check day if valid for the month
+    elif day <= mon_max(mon, year):
+        return True
 
 def day_iter(start_date: str, num: int) -> str:
     "iterates from start date by num to return end date in DD/MM/YYYY"
-    ...
-
+    current_date = start_date
+    count = num
+    
+    if num > 0:
+        while count > 0:
+            current_date = after(current_date)
+            count = count - 1
+    else:
+        while count < 0:
+            current_date = before(current_date)
+            count = count + 1
+            
+    return current_date
+    
 if __name__ == "__main__":
     # check length of arguments
+    if len(sys.argv) != 3:
+        usage()
+    
     # check first arg is a valid date
+    if not valid_date(sys.argv[1]):
+        usage()
+    
     # check that second arg is a valid number (+/-)
+    try:
+        num = int(sys.argv[2])
+    except ValueError:
+        usage()
+    
     # call day_iter function to get end date, save to x
+    x = day_iter(sys.argv[1], num)
+    
     # print(f'The end date is {day_of_week(x)}, {x}.')
-    pass
+    print(f'The end date is {day_of_week(x)}, {x}.')
